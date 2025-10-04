@@ -1,0 +1,44 @@
+{
+  # Global options
+  auto_https off
+  servers {
+    trusted_proxies static private_ranges
+  }
+  log {
+    level INFO
+    format console
+    output stderr
+  }
+}
+
+:80 {
+  encode gzip zstd
+
+  # --- New PaddockTS app ---
+  # API (strip prefix /PaddockTS/api)
+  handle_path /PaddockTS/api/* {
+    reverse_proxy backend:3200
+  }
+
+  # Frontend (keep /PaddockTS prefix)
+  @paddock path /PaddockTS*
+  handle @paddock {
+    reverse_proxy frontend:3000
+  }
+
+  # --- Legacy app (same as old config) ---
+  # API under /api/*
+  handle /api* {
+    reverse_proxy civilise-backend:5000
+  }
+
+  # Everything else (legacy frontend)
+  handle /* {
+    reverse_proxy civilise-frontend:4200
+  }
+
+  header {
+    X-Content-Type-Options nosniff
+    Referrer-Policy strict-origin-when-cross-origin
+  }
+}
