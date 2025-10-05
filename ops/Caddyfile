@@ -26,6 +26,17 @@
     reverse_proxy frontend:3000
   }
 
+
+  handle_path /DAESIM/api/* {
+    reverse_proxy daesim-backend:2000
+  }
+
+  # Frontend (keep /DAESIM prefix)
+  @daesim path /DAESIM*
+  handle @daesim {
+    reverse_proxy daesim-frontend:4000
+  }
+
   # --- Legacy app (same as old config) ---
   # API under /api/*
   handle /api* {

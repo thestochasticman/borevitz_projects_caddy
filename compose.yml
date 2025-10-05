@@ -1,7 +1,7 @@
 services:
   caddy:
     image: caddy:2
-    container_name: paddock-caddy
+    container_name: borevitz-caddy
     # depends_on: [frontend, backend]
     ports:
       - "80:80"
